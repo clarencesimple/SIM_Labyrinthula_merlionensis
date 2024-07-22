@@ -1,10 +1,11 @@
 # Labyrinthula_merlionensis
 
 Scripts and data for:  
+
 Clarence Wei Hung Sim, Marie Walde, Hanna Strindberg, Avneet Kaur, Sophie Le Panse, Priscilla Gourvil, Jens Jahren, Daniel Vaulot & Adriana Lopes dos Santos (in prep). A novel Labyrinthulid Labyrinthula merlionensis n. sp. and its interaction with marine diatoms
 
 ## Generating full 18S sequence from RCC7798 (Labyrinthula - Biddulphia co culture)
-1. Under the [pacbio folder](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/), the fastQ files of CCS reads generated from pacbio sequencing of RCC7798 (Labyrinthula-diatom co-culture) [Laby_Pacbio.Rmd](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/Laby_Pacbio.Rmd). Please make sure to install packages before running. Scripts are written using relative file paths, no changes any file paths are required upon cloning this repository.
+1. Under the [pacbio folder](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/), the fastQ files of CCS reads generated from pacbio sequencing of RCC7798 (Labyrinthula-diatom co-culture) [Laby_Pacbio.Rmd](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/Laby_Pacbio.Rmd). Please make sure to install packages before running. Scripts are written using relative file paths, no changes any file paths are required upon cloning this repository. (Note: the raw sequences are not published yet)
 2. Taxonomic and sequence tables were produced containing ASVs assigned to PR2 taxa. [Clarence_PacBio_Overall.csv ](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/Clarence_PacBio_Overall.csv) contains ASVs from all samples in this pacbio run (including those not relevant to this study). [pacbio_taxon_table.csv](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/pacbio_taxon_table.csv) contains ASVs in RCC7798.
 3. ASVs were clustered at 99% in [sbatch_cluster.sh](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/sbatch_cluster.sh), resulting in the final sequences used for this study to describe the two taxa in the co-culture, in  [clusters_0.99_Laby_18S_Canada.pacbio.centroids.fasta](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/pacbio/clusters_0.99_Laby_18S_Canada.pacbio.centroids.fasta)
 
