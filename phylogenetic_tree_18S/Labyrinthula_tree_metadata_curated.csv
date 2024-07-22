@@ -1,0 +1,42 @@
+tree_position,species,genbank_accession,ID_code,cluster_size,environment,substrate,substrate_description,location,reference,authors
+1,Labyrinthula_sp,EU431329,LTH,2,marine,others,Symbiont of an amoeba in fishgill,"Spain, Northwest farm",doi:10.1016/j.ejop.2008.04.001,Dykova et al. 2008
+2,Labyrinthula_sp,AB095092,L59,9,marine,others,Unidentified floating leaf,"Japan, Hokkaido",10.1007/s00253-003-1333-4,Kumon et al. 2003
+3,Labyrinthula_sp,KT201567,QZ.18S_5,5,marine,sediment,Benthic diatom film,Unknown,NA,Huang et al. 
+4,Labyrinthula_sp,FR875355,San25,NA,marine,seagrass,Zostera marina,"Norway, Skagerrak, Sandspollen",http://dx.doi.org/10.3354/meps09398,Bockelmann et al. 2012
+5,Labyrinthula_sp,FR875359,Sva13,8,marine,seagrass,Zostera marina,"Finland, Northern Baltic, Svartholm",http://dx.doi.org/10.3354/meps09398,Bockelmann et al. 2012
+6,Labyrinthula_zosterae,KU559375,302b9-PO,1,marine,seagrass,Posidonia oceanica,"Spain, Mediterranean Sea, Alicante, Alicante Bay",https://doi.org/10.1007/s12237-016-0087-z,Martin et al. 2016
+7,Labyrinthula_sp,AB246794,N8,10,marine,others,Mangrove leaf,Japan,doi:10.1016/j.ympev.2008.09.027,Tsui et al. 2009
+8,Labyrinthula_sp,AB290455,L95-1,6,marine,others,seaweed,"Japan, Kagoshima Bay",NA,Wahhid 2008
+9,Labyrinthula_merlionensis,This_study,This study,NA,marine,seawater,Biddulphia sp.,"Singapore, Singapore Straits",This study,This study
+10,Labyrinthula_zosterae,FR875308,LA79,22,marine,seagrass,Zostera marina,"Italy, Adriatic Sea, Gabicce Mare",http://dx.doi.org/10.3354/meps09398,Bockelmann et al. 2012
+11,Labyrinthula_sp,KU559379,215b-ZM,NA,marine,seagrass,Zostera marina,"USA, Virginia, Chesapeake Bay, Cape Charles",https://doi.org/10.1007/s12237-016-0087-z,Martin et al. 2016
+12,Labyrinthula_diatomea,MN101174,NA,NA,marine,sediment,Sediment sample,"Thailand, Pattaya",doi:10.1111/jeu.12789,Popova et al. 2020
+13,Labyrinthula_sp,AB290457,01-Jy-1b,NA,marine,others,Mangrove leaf,"Japan, Kagoshima Bay", https://doi.org/10.1111/j.1444-2906.2007.01467.x,Wahhid 2007
+14,Labyrinthula_sp,AB290459,00-Bat-05,1,marine,others,Mangrove leaf,"Philippines, Batan Bay", https://doi.org/10.1111/j.1444-2906.2007.01467.x,Wahhid 2007
+15,Labyrinthula_sp,MF872140,Ln11,NA,marine,seagrass,Zostera nigricaulis,"Australia, Victoria, Portarlington",https://doi.org/10.1016/j.micres.2017.10.003,Trevathan-Tackett et al. 2018
+16,Labyrinthula_sp,MF872145,Ln5,NA,marine,seagrass,Posidonia australis,"Australia, New South Wales, Palm Beach",https://doi.org/10.1016/j.micres.2017.10.003,Trevathan-Tackett et al. 2018
+17,Labyrinthula_sp,OR356117,L7.2,1,marine,seagrass,Thalassia testudinum,"USA, Florida",10.3389/fmars.2024.1359610,Ugarelli et al. 2024
+18,Labyrinthula_zosterae,KU559374,18b-CN,1,marine,seagrass,Cymodocea nodosa,"USA, Virginia, Chesapeake Bay, Cape Charles",https://doi.org/10.1007/s12237-016-0087-z,Martin et al. 2016
+19,Labyrinthula_zosterae,MF872127,DP1_Zm_F,4,marine,seagrass,Zostera muelleri,"Spain, Mediterranean Sea, Mallorca Island, Pollenca",https://doi.org/10.1016/j.micres.2017.10.003,"Trevathan-Tackett et al., 2018"
+20,Labyrinthula_zosterae,PP496743,V24,NA,marine,seagrass,Zostera marina,"USA, Oregon",NA,Agnew et al. 2022
+21,Labyrinthula_sp,MF872126,WAR_Zm_A,NA,marine,seagrass,Zostera muelleri,"Australia, Victoria, Warneet",https://doi.org/10.1016/j.micres.2017.10.003,"Trevathan-Tackett et al., 2018"
+22,Labyrinthula_sp,MF872125,DP1_Pa_G,NA,marine,seagrass,Posidonia australis,"Australia, Victoria, Duck Point",https://doi.org/10.1016/j.micres.2017.10.003,"Trevathan-Tackett et al., 2018"
+23,Labyrinthula_sp,EF100254,D2P04F11,1,marine,sediment,Oxygen-depleted intertidal marine sediment,"Greenland, Disko Isalnd, Unqussivik",https://doi.org/10.1371/journal.pone.0000728,Stoeck et al. 2007
+24,Labyrinthula_sp,EF100308,D3P06A09,2,marine,sediment,Oxygen-depleted intertidal marine sediment,"Greenland, Disko Isalnd, Unqussivik",https://doi.org/10.1371/journal.pone.0000728,Stoeck et al. 2007
+25,Labyrinthula_sp,EF100369,D5P10B11,NA,marine,sediment,Oxygen-depleted intertidal marine sediment,"Greenland, Disko Isalnd, Unqussivik",https://doi.org/10.1371/journal.pone.0000728,Stoeck et al. 2007
+26,Labyrinthula_sp,AF265332,s,1,marine,seagrass,Zostera marina,"USA, NH, Adams Pt.",https://doi.org/10.1080/00275514.2001.12063179,Leander & Porter 2001
+27,Labyrinthula_sp,AF265330,f,1,terrestrial,land grass,Spartina alterniflora,"USA, GA, Sapelo Island",https://doi.org/10.1080/00275514.2001.12063179,Leander & Porter 2001
+28,Labyrinthula_zosterae,AF265334,MBL 93-2,1,marine,seagrass,Zostera marina,"USA, MA, Woods Hole",https://doi.org/10.1080/00275514.2001.12063179,Leander & Porter 2001
+29,Labyrinthula_zosterae,AF265335,type-154,1,marine,seagrass,Zostera marina,"USA, WA, San Juan Island",https://doi.org/10.1080/00275514.2001.12063179,Leander & Porter 2001
+30,Labyrinthula_sp,GQ499191,NA,7,terrestrial,land grass,Poa trivialis,"USA, Arizona, Tucson, golf course",10.1016/j.mycres.2009.08.002,Douhan et al. 2009
+31,Labyrinthula_terrestris,CL603046,AZ-3,6,terrestrial,land grass,Poa annua,"USA, Arizona",10.3852/mycologia.97.1.160,Craven et al. 2005
+32,Labyrinthula_terrestris,GQ499189,Laby10,8,terrestrial,land grass,Poa trivialis,"USA, South Carolina",10.1016/j.mycres.2009.08.002,Douhan et al. 2009
+33,Labyrinthula_terrestris,CL603049,CA-5,1,terrestrial,land grass,Poa annua,"USA, California",10.3852/mycologia.97.1.160,Craven et al. 2005
+34,Labyrinthula_terrestris,CL603054,UT1-4,1,terrestrial,land grass,Poa annua,"USA, Utah",10.3852/mycologia.97.1.160,Craven et al. 2005
+35,Labyrinthula_terrestris,KP996014,Laby830,NA,terrestrial,land grass,Turfgrass,"USA, Arizona and New Mexico",https://doi.org/10.1007/s10658-015-0701-0,Chitrampalam et al. 2015
+36,Labyrinthula_sp,KP996040,Laby879,1,terrestrial,land grass,Turfgrass,"USA, Arizona and New Mexico",https://doi.org/10.1007/s10658-015-0701-0,Chitrampalam et al. 2015
+37,Labyrinthula_sp,KP996186,Laby2020,1,terrestrial,land grass,Turfgrass,"USA, Arizona and New Mexico",https://doi.org/10.1007/s10658-015-0701-0,Chitrampalam et al. 2015
+38,Labyrinthulomycetes_LAB1_sp,AB275111,CPSGM-4,1,marine,sediment,Methane cold seep sediment,"Japan, Sagami Bay",,
+39,Labyrinthulomycetes_LAB1_sp,FJ800640,PJS101305_37,3,marine,sediment,Sediment sample,"USA, New York, Port Jefferson Harbour",,
+40,Labyrinthulomycetes_LAB1_sp,FJ800629,PJS101305_10,1,marine,sediment,Sediment sample,"USA, New York, Port Jefferson Harbour",,
+41,Labyrinthulomycetes_LAB1_sp,GU823297,AI5F15RJ3D09,1,marine,seawater,Micro-oxic water column sample,"Cariaco Basin, Caribbean Sea",,

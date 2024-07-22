@@ -1,0 +1,254 @@
+---
+title: "Laby_Pacbio"
+author: "Clarence Sim"
+date: "7/4/2022"
+output: html_document
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+
+library(knitr)
+library(rmdformats)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               eval = TRUE)
+opts_knit$set(width=75)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+```
+
+```{r}
+# https://benjjneb.github.io/LRASManuscript/LRASms_fecal.html
+
+library(dada2);packageVersion("dada2")
+
+library(Biostrings); packageVersion("Biostrings")
+library(ShortRead); packageVersion("ShortRead")
+library(ggplot2); packageVersion("ggplot2")
+library(reshape2); packageVersion("reshape2")
+library(gridExtra); packageVersion("gridExtra")
+library(phyloseq); packageVersion('phyloseq')
+library(stringr)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(RColorBrewer)
+library(patchwork)
+```
+
+```{r}
+
+path2 <- "./OngFull18S/"
+
+path.out <- "./Figures"
+path.rds <- "./RDS"
+fns2 <- list.files(path2, pattern="fastq.gz", full.names=TRUE)
+NSF4 <- "CTGGTTGATYCTGCCAGT"
+EukR <- "TGATCCTTCTGCAGGTTCACCTAC"
+rc <- dada2:::rc
+theme_set(theme_bw())
+
+```
+
+```{r}
+nops2 <- file.path(path2, "noprimers", basename(fns2))
+prim2 <- removePrimers(fns2, nops2, primer.fwd=NSF4, primer.rev=dada2:::rc(EukR), orient=TRUE)
+
+lens.fn <- lapply(nops2, function(fn) nchar(getSequences(fn)))
+lens <- do.call(c, lens.fn)
+hist(lens, 150)
+
+filts2 <- file.path(path2, "noprimers", "filtered", basename(fns2))
+track2 <- filterAndTrim(nops2, filts2, minQ=3, minLen=1000, maxLen=3000, maxN=0, rm.phix=FALSE, maxEE=2)
+track2
+```
+
+# DADA2
+
+```{r}
+drp2 <- derepFastq(filts2, verbose=TRUE)
+err2 <- learnErrors(drp2, errorEstimationFunction=PacBioErrfun, BAND_SIZE=32, multithread=TRUE, qualityType="FastqQuality")
+#70736389 total bases in 41844 reads from 5 samples will be used for learning the error rates.
+help(learnErrors)
+#this takes 5mins
+saveRDS(err2, file.path(path.rds, "Laby_err2.rds"))
+plotErrors(err2)
+
+#denoise
+dd2 <- dada(drp2, err=err2, BAND_SIZE=32, multithread=TRUE)
+saveRDS(dd2, file.path(path.rds, "Laby_dd2.rds"))
+
+#read tracking
+cbind(ccs=prim2[,1], primers=prim2[,2], filtered=track2[,2], denoised=sapply(dd2, function(x) sum(x$denoised)))
+
+#sequence table
+#Before assignTaxonomy, save st2 and look first. If dominated by a few ASVs,
+# Can try subsample ASVs (e.g. take top 10, or just one row)
+st2 <- makeSequenceTable(dd2); dim(st2)
+write.csv(st2,"./sequence_table.csv")
+#Assign one sample first (maybe try the lowest no. of unique sequences first)
+#st2_sub<-st2[,c(1:2)]
+#Assign Taxonomy
+# Slowest part
+#tax2_sub <- assignTaxonomy(st2_sub, "./tax/pr2_version_4.14.0_SSU_dada2.fasta", multithread=FALSE) 
+#head(unname(tax2))
+
+bim2 <- isBimeraDenovo(st2, minFoldParentOverAbundance=3.5, multithread=TRUE)
+table(bim2)
+sum(st2[,bim2])/sum(st2)
+
+out.nobim <- removeBimeraDenovo(dd2)
+st2_nobim <- makeSequenceTable(out.nobim); dim(out.nobim)
+write.csv(st2_nobim,"./sequence_table_nobim.csv")
+
+st2_nobim<-read.csv("./sequence_table_nobim.csv",header=T, row.names=1)
+st2_sub<-st2_nobim[c(1:4),c(1:4)]
+```
+
+#making fasta file for assigntaxonomy
+
+```{r}
+st2<-st2_sub
+asv_number<-c(1:ncol(st2))
+asv_code <- str_pad(asv_number, 3, pad = "0")
+sequence <- colnames(st2)
+dd2_trans <- as.data.frame(st2) %>% 
+  rbind(asv_code,sequence)
+
+row.names(dd2_trans)[nrow(st2)+1] <- "asv_code"
+row.names(dd2_trans)[nrow(st2)+2] <- "sequence"
+
+dd2_trans<-as.data.frame(t(dd2_trans))
+seq_out <- Biostrings::DNAStringSet(dd2_trans$sequence)
+names(seq_out) <- dd2_trans$asv_code
+Biostrings::writeXStringSet(seq_out, file.path("CS_no_taxo.fasta"), compress=FALSE, width = 20000)
+
+```
+
+#assignTaxo
+
+```{r}
+#Assign Taxonomy
+# Slowest part
+ PR2_tax_levels <- c("Kingdom", "Supergroup","Division", "Class", 
+                      "Order", "Family", "Genus", "Species")
+
+    taxa <- assignTaxonomy(seq_out, refFasta="./tax/pr2_version_4.14.0_SSU_dada2.fasta",  
+                           taxLevels = PR2_tax_levels,
+                           minBoot = 0, outputBootstraps = TRUE,
+                           verbose = TRUE)
+    saveRDS(taxa, "./laby_pacbio.rds")
+    
+tax2_sub <- assignTaxonomy(seq_out, , multithread=FALSE) 
+
+ #ABIMS
+taxa<-read_excel("./Clarence_PacBio_no_taxo.dada2.xlsx") %>%
+  rename(asv_code=seq_name)
+
+
+
+dd2_trans <- dd2_trans %>% rename_at(vars(ends_with(".hifi_reads.fastq.gz")), 
+                                         funs(str_replace(., ".hifi_reads.fastq.gz", "")))
+dd2_trans$asv_code <- str_c("asv_",dd2_trans$asv_code)
+overall <- left_join(taxa,dd2_trans,by="asv_code")
+
+write.csv(overall,"./Clarence_PacBio_Overall.csv")
+```
+
+```{r fig.width=10, fig.height=10}
+
+overall<-read.csv("./Clarence_PacBio_Overall.csv",header=T, row.names=1)
+st2_nobim<-read.csv("./sequence_table_nobim.csv",header=T, row.names=1)
+seq_nobim<-colnames(st2_nobim)
+
+overall <- overall %>% 
+  filter(sequence %in% seq_nobim)
+
+laby_samples<-c("LABY01_18S","LABY02_18S","LABY03_18S","LABY04_18S")
+
+overall_culture <- overall %>% 
+  filter(supergroup!="Opisthokonta") %>%
+  mutate_at(laby_samples, as.numeric) %>%
+  mutate(sum=LABY01_18S+LABY02_18S+LABY03_18S+LABY04_18S) %>% 
+  filter(sum>0) %>%
+  select(-NC_18S)
+
+write.csv(overall_culture,"pacbio_taxon_table.csv")
+
+long <- overall_culture %>% 
+  pivot_longer(cols=c(LABY01_18S:LABY04_18S),names_to = "samples",values_to = "n_reads")
+long$n_reads<-as.numeric(long$n_reads)
+
+table_species <- overall_culture %>%
+  group_by(class,species) %>%
+  summarize(n_asv=n(),n_reads=sum(sum))
+
+
+overall_culture$species <-str_remove_all(overall_culture$species, "[.]")
+overall_culture$name <- str_c(overall_culture$asv_code,"_",overall_culture$species,";size=",overall_culture$sum)
+asv_seq <- Biostrings::DNAStringSet(overall_culture$sequence)
+names(asv_seq) <- overall_culture$name
+
+Biostrings::writeXStringSet(asv_seq, file.path("PacBioCanada_Laby.fasta"), compress=FALSE, width = 20000)
+
+
+```
+
+# Clustering SMS89 PacBio from Toulouse
+
+```{r fig.width=10, fig.height=10}
+
+SMS <- read_xlsx("./Singapore_SMS_PacBio_dada2.xlsx")
+
+
+SMS89 <- SMS %>%
+  filter(SMS89 > 0) %>%
+  select(-SMS08, -SMS10, -SMS14)
+
+SMS89_18S_seq <- SMS89$sequence_18S
+
+  
+SMS89$species <-str_remove_all(SMS89$species, "[.]")
+SMS89$name <- str_c(SMS89$asv_code,"_",SMS89$species,";size=",SMS89$SMS89)
+SMS89_18S_seq <- Biostrings::DNAStringSet(SMS89_18S_seq)
+names(SMS89_18S_seq) <- SMS89$name
+
+Biostrings::writeXStringSet(SMS89_18S_seq, file.path("PacBioToulouse_Laby.fasta"), compress=FALSE, width = 20000)
+
+
+```
+
+# Cell size
+```{r fig.width=10, fig.height=10}
+cell_size <- read_xlsx("./cell_size.xlsx") 
+length.mean=mean(cell_size$length_um)
+width.mean=mean(cell_size$width_um)
+
+cell_size_long <- cell_size %>%
+  mutate(Length=length_um,Width=width_um) %>%
+  pivot_longer(cols=c(Length,Width),names_to = "group",values_to = "length")
+
+plot <- ggplot(cell_size_long, aes(x=length, fill=group)) + 
+  geom_histogram(color="black",binwidth = 0.2,alpha=0.8) +
+  geom_vline(xintercept = length.mean, linetype="dashed", size=1, color="#004E8A") + 
+  geom_vline(xintercept = width.mean, linetype="dashed", size=1, color="#B87800") + 
+  theme_classic() +
+  theme(text=element_text(size=20),
+        legend.position="top",
+        legend.title = element_blank()) +
+  xlab(expression("Cell size (" * mu * "m)")) +
+  scale_x_continuous(breaks = seq(2,14,1)) +
+  scale_fill_manual(breaks=c("Width","Length"), values=c("#B87800","#004E8A"))
+plot
+
+pdf("./cell_size.pdf", height=7, width=10); plot(plot); dev.off() 
+
+```
+

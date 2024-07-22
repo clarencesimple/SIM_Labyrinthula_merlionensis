@@ -1,0 +1,153 @@
+---
+title: "Labyrinthula_tree"
+author: "Clarence Sim"
+date: '2024-05-22'
+output: html_document
+---
+
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+
+library(knitr)
+library(rmdformats)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               eval = TRUE)
+opts_knit$set(width=75)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+```
+
+```{r}
+library(stringr)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(xtable)
+```
+
+```{r}
+Labyrinthula <- read_xlsx("./PR2_Labyrinthula/Labyrinthula_curated_clarence.xlsx",sheet="metadata")
+nrow(Labyrinthula)
+
+#ggplot(Labyrinthula, aes(x=sequence_length)) + geom_histogram(binwidth = 10)
+
+Labyrinthula_derep <- Labyrinthula %>%
+  filter(sequence_length>900) %>%
+  arrange(desc(sequence_length)) %>%
+  distinct(sequence_hash,.keep_all=TRUE) %>%
+  filter(genbank_accession != "OBEP000000000") #Removed - obtained from genome
+
+
+LAB1 <- read_xlsx("./PR2_Labyrinthulomycetes_LAB1/pr2_export.xlsx",sheet="metadata")
+nrow(LAB1)
+
+LAB1_derep <- LAB1 %>%
+  filter(sequence_length>900) %>%
+  arrange(desc(sequence_length)) %>%
+  distinct(sequence_hash,.keep_all=TRUE) %>%
+  filter(genbank_accession != "EU561694") #Removed - Chimera
+
+tree_seq <- bind_rows(Labyrinthula_derep,LAB1_derep)
+
+tree_seq$species <-str_remove_all(tree_seq$species, "[.]")
+tree_seq$name <- str_c(tree_seq$genbank_accession,"_",tree_seq$species,"_(",tree_seq$pr2_sample_type,":",tree_seq$substrate,")")
+tree_seq$name <-str_remove_all(tree_seq$name, "[ ]")
+
+seq <- Biostrings::DNAStringSet(tree_seq$sequence)
+names(seq) <- tree_seq$name
+Biostrings::writeXStringSet(seq, file.path("Labyrinthula_derep_sequences.fasta"), compress=FALSE, width = 20000)
+
+
+# After clustering at 0.99%
+col_names <- c("record_type","cluster_no","seq_len","similarity","match_orientation","seq","centroid_seq")
+cluster <- read_tsv("./clusters_0.99_Labyrinthula_derep_sequences.tsv",col_names=FALSE) %>% 
+  select(1:5,9,10) %>%
+  rename_with(~col_names) %>%
+  filter(record_type!="C") %>%
+  mutate(genbank_accession=str_split_i(seq,"_",1))
+
+cluster_seq <- cluster %>%
+  filter(record_type=="S")
+
+# Do a tree with clusters and these 2 unique sequences
+
+final_tree_accession <- c(cluster_seq$genbank_accession, 
+              "MN101174", # Labyrinthula diatomea
+              "This_study", # Labyrinthula merlionensis
+              "MF872125", # Same cluster as L. merlionensis # Host: Posidonia australis
+              "MF872126", # Same cluster as L. merlionensis # Host: Zostera muelleri
+              "KP996014", # Terrestris cluster
+              "PP496743", # Zosterae cluster
+              "AB290457", # Same cluster as FR875359
+              "MF872145", # Same cluster as FR875359
+              "FR875355", # Same cluster as AB095092
+              "KU559379", # Same cluster as AB095092
+              "MF872140", # Same cluster as AB095092
+              "EF100369", # Same cluster as EF100308 sediment
+              "EF100254") # Another sediment
+              # "MF134826", # Same cluster as L. merlionensis # Host: Shrimp Pond # suspicious
+
+
+to_remove <- c("GU824074", # remove because iqtree failed composition chi2 test (p-value<5%; df=3)
+               "GU825398", # remove because iqtree failed composition chi2 test (p-value<5%; df=3)
+               "FJ800605", # singleton that falls strangely in outgroup
+               "EF100370", # singleton, too short, lone branch
+               "GQ499190", # singleton, lone branch
+               "AB290454", # singleton, lone branch
+               "AY821970", # singleton, lone branch
+               "GQ499190", # singleton, lone branch
+               "GQ499192", # singleton, lone branch
+               "PP496750", # singleton, lone branch
+               "KU559378", # singleton, lone branch
+               "AY835688",# singleton, lone branch
+               "HM581932", # suspicious, no description, direct submission
+               "FJ536742") # suspicious, no description, direct submission
+
+
+tree_fasta <- tree_seq %>%
+  filter(genbank_accession %in% final_tree_accession) %>%
+  filter(!(genbank_accession %in% to_remove))
+
+tree_fasta$name <- str_c(tree_fasta$genbank_accession,"_",tree_fasta$species)
+
+         
+seq <- Biostrings::DNAStringSet(tree_fasta$sequence)
+names(seq) <- tree_fasta$name
+Biostrings::writeXStringSet(seq, file.path("Labyrinthula_tree_cluster_foralignment.fasta"), compress=FALSE, width = 20000)
+# This is for alignment
+
+tree_metadata <- tree_fasta %>%
+  select(name, species, genbank_accession, environment, substrate, gb_isolation_source, gb_host, pr2_sample_type, pr2_country, pr2_location,gb_clone,gb_isolate,gb_strain)
+
+cluster_size <- read_tsv("./clusters_0.99_Labyrinthula_derep_sequences.tsv",col_names=FALSE) %>% 
+  select(1:5,9,10) %>%
+  rename_with(~col_names) %>%
+  filter(record_type=="C") %>% 
+  select(seq, seq_len) %>%
+  rename(genbank_accession=seq, cluster_size=seq_len)
+
+cluster_size$genbank_accession <- gsub("\\_.*","",cluster_size$genbank_accession)
+
+tree_metadata <- left_join(tree_metadata,cluster_size,by="genbank_accession") 
+tree_metadata$substrate <- gsub(" ","_",tree_metadata$substrate)
+# write.csv(tree_metadata, "./Labyrinthula_tree_metadata.csv")
+
+
+# Cleaned metadata as latex table
+clean_metadata <- read.csv("./Labyrinthula_tree_metadata_curated.csv") %>%
+  select(-reference) %>%
+  filter(tree_position<38) %>%
+  arrange(desc(tree_position)) %>%
+  select(-tree_position)
+
+ xtable(clean_metadata)
+```
