@@ -17,4 +17,6 @@ Clarence Wei Hung Sim, Marie Walde, Hanna Strindberg, Avneet Kaur, Sophie Le Pan
 3. Clustered sequences were used in tree construction, with manual adding and removal of sequences in [Labyrinthula_tree.Rmd](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/phylogenetic_tree_18S/Labyrinthula_tree.Rmd) to best represent diversity of Labyrinthula spp.
 4. The final list of sequences were then aligned in [sbatch_alignment.sh](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/phylogenetic_tree_18S/sbatch_alignment.sh)
 5. Manually curated metadata of the final list of sequences can be found here: [Labyrinthula_tree_metadata_curated.csv](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/phylogenetic_tree_18S/Labyrinthula_tree_metadata_curated.csv)
-6. Average cell size of Labyrinthula merlionensis vegetative cell was also plotted in this RMD file.
+
+## [Cell size (microscopy)](https://github.com/clarencesimple/SIM_Labyrinthula_merlionensis/blob/main/cell_size_microscopy/)
+1. Average cell size of Labyrinthula merlionensis vegetative cell was also plotted in the RMD file.
